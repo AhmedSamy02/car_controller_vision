@@ -1,0 +1,34 @@
+name: car_controller
+description: "A new Flutter project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  camera: ^0.10.5+9
+  ffi: ^2.1.2
+  flutter_xlider: ^3.5.0
+  get_it: ^7.6.8
+  awesome_dialog: ^3.2.0
+  image: ^4.1.7
+  image_picker: ^1.0.7
+  flutter:
+    sdk: flutter
+  flutter_bluetooth_serial: ^0.4.0
+  fluttertoast: ^8.2.4
+  logger: ^2.0.2+1
+  native_opencv:
+    path: ../native_opencv
+  path_provider: ^2.1.2
+
+dev_dependencies:
+  flutter_lints: ^3.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - images/
