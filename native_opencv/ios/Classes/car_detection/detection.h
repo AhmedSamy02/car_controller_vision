@@ -6,6 +6,7 @@ class IMAGE
         cv::Mat img;
         cv::Mat grey;
         cv::Mat binary;
+        bool error_image;
         std::vector<cv::Point2f> output_corners;
         std::vector<cv::Point2f> corners;
         cv::Mat temp_img;
