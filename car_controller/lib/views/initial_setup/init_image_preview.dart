@@ -25,7 +25,9 @@ class _InitImagePreviewState extends State<InitImagePreview> {
         ),
       )),
       body: Center(
-        child: Image.memory(img),
+        child: SizedBox(
+          width: double.infinity,
+          child: Image.memory(img, fit: BoxFit.cover),),
       ),
     );
   }
