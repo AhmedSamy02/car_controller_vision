@@ -7,3 +7,4 @@ const String kHomeScreen = 'home_screen';
 const String kInitSlidersScreen = 'init_sliders_screen';
 const String kInitImageScreen = 'init_image_screen';
 const String kInitImagePreviewScreen = 'init_image_preview_screen';
+const String kDetectionScreen = 'detection_screen';

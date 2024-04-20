@@ -44,7 +44,10 @@ class _HomeScreenState extends State<HomeScreen> {
               child: const Text('Init Image'),
             ),
             ElevatedButton(
-                onPressed: () {}, child: const Text('Image Detection')),
+                onPressed: () {
+                  Navigator.pushNamed(context, kDetectionScreen);
+                },
+                child: const Text('Image Detection')),
             ElevatedButton(onPressed: () {}, child: const Text('Disconnect'))
           ],
         ),

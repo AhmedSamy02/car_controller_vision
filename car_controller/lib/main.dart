@@ -1,5 +1,6 @@
 import 'package:car_controller/constants.dart';
 import 'package:car_controller/controllers/serial_bluetooth.dart';
+import 'package:car_controller/views/detection/detection_screen.dart';
 import 'package:car_controller/views/home_screen.dart';
 import 'package:car_controller/views/initial_setup/init_image_preview.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         kInitImageScreen: (context) => const InitImageScreen(),
         kInitSlidersScreen: (context) => const InitSliderScreen(),
         kInitImagePreviewScreen: (context) => const InitImagePreview(),
+        kDetectionScreen:(context) => const DetectionScreen(),
       },
       initialRoute: kHomeScreen,
     );
@@ -38,6 +40,7 @@ class MyApp extends StatelessWidget {
 }
 
 void setup() {
+  WidgetsFlutterBinding.ensureInitialized();
   getIt.registerSingleton<NativeOpencv>(NativeOpencv());
   getIt.registerSingleton<SerialBluetooth>(SerialBluetooth());
 }
