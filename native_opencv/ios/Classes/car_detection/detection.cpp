@@ -98,6 +98,26 @@
             {
                 throw "Invalid number of corners detected!";
             }
+            std::sort(corners.begin(), corners.end(),
+            [](const cv::Point2f& a, const cv::Point2f& b) {
+              return (a.x < b.x) || (a.x == b.x && a.y < b.y);
+            });
+            std::vector<cv::Point2f> left_set(corners.begin(), corners.begin() + 2);
+            std::vector<cv::Point2f> right_set(corners.end() - 2, corners.end());
+            std::sort(left_set.begin(), left_set.end(),
+            [](const cv::Point2f& a, const cv::Point2f& b) {
+                return a.y < b.y;
+            });
+
+            // Sort the right set by y-coordinate in descending order
+            std::sort(right_set.begin(), right_set.end(),
+                        [](const cv::Point2f& a, const cv::Point2f& b) {
+                        return a.y > b.y;
+                        });
+            corners.clear();
+            corners.insert(corners.end(), left_set.begin(), left_set.end());
+            corners.insert(corners.end(), right_set.begin(), right_set.end());
+     
             output_corners = {cv::Point2f(0, 0), cv::Point2f(0, height), cv::Point2f(width, height), cv::Point2f(width, 0)};
             cv::Mat matrix = cv::getPerspectiveTransform(corners, output_corners);
             warpPerspective(grey, temp_img, matrix, cv::Size(width, height));
