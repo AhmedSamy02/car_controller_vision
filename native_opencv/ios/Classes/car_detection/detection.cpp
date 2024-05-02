@@ -5,6 +5,13 @@
     using namespace cv;
 
     #include <opencv2/imgproc.hpp> // Add this line to include the necessary header for cvtColor
+<<<<<<< HEAD
+    IMAGE::IMAGE(Mat & img, int threshold,int height_up, float height_down)
+    {
+        error_image = false;
+        this->img = img;
+        cropImage(height_up,height_down,threshold);
+=======
     IMAGE::IMAGE(Mat &img, int threshold)
     {
         try
@@ -20,6 +27,7 @@
             error_image = true;
             return;
         }
+>>>>>>> c4b694c4dfd2c9beb2c3829e07827fada6b6cd30
     }
 
     Mat& IMAGE::getImg()
@@ -128,8 +136,37 @@
             error_image = true;
             return;
         }
+<<<<<<< HEAD
+        std::sort(corners.begin(), corners.end(),
+            [](const cv::Point2f& a, const cv::Point2f& b) {
+              return (a.x < b.x) || (a.x == b.x && a.y < b.y);
+            });
+        std::vector<cv::Point2f> left_set(corners.begin(), corners.begin() + 2);
+        std::vector<cv::Point2f> right_set(corners.end() - 2, corners.end());
+        std::sort(left_set.begin(), left_set.end(),
+        [](const cv::Point2f& a, const cv::Point2f& b) {
+            return a.y < b.y;
+        });
+
+        // Sort the right set by y-coordinate in descending order
+        std::sort(right_set.begin(), right_set.end(),
+                    [](const cv::Point2f& a, const cv::Point2f& b) {
+                    return a.y > b.y;
+                    });
+        corners.clear();
+        corners.insert(corners.end(), left_set.begin(), left_set.end());
+        corners.insert(corners.end(), right_set.begin(), right_set.end());
+     
+
+        output_corners = {cv::Point2f(0, 0), cv::Point2f(0, height), cv::Point2f(width, height), cv::Point2f(width, 0)};
+        cv::Mat matrix = cv::getPerspectiveTransform(corners, output_corners);
+        warpPerspective(grey, temp_img, matrix, cv::Size(width, height));
+    }
+    void IMAGE::RefixThreholds(int binary_threshold,int size_theshold, bool contours_threshold)
+=======
     }
     void IMAGE::RefixThreholds(int binary_threshold, int size_theshold)
+>>>>>>> c4b694c4dfd2c9beb2c3829e07827fada6b6cd30
     {
         if (error_image)
             return;
@@ -144,8 +181,13 @@
             std::sort(contours.begin(), contours.end(), [](const std::vector<cv::Point> &a, const std::vector<cv::Point> &b)
                       { return cv::contourArea(a) > cv::contourArea(b); });
 
+<<<<<<< HEAD
+        if (!contours.empty() && contours_threshold)
+            contours.erase(contours.begin());
+=======
             if (!contours.empty())
                 contours.erase(contours.begin());
+>>>>>>> c4b694c4dfd2c9beb2c3829e07827fada6b6cd30
 
             std::vector<std::vector<cv::Point>> filtered_contours;
             for (const auto &contour : contours)
@@ -166,9 +208,21 @@
         {
             temp_img = cv::Mat::zeros(grey.size(), grey.type());
 
+<<<<<<< HEAD
+        cv::drawContours(corrected_image, filtered_contours, -1, cv::Scalar(0, 255, 0), 3);
+        cv::Mat mask = cv::Mat::zeros(temp_img.size(), CV_8UC1);
+        cv::fillPoly(mask, filtered_contours, cv::Scalar(255));
+        int black_pixels = countNonZero(mask == 0);
+        int white_pixels = countNonZero(mask == 255);
+        if (black_pixels > white_pixels) {
+            cv::bitwise_not(mask, mask);
+        }
+        temp_img=mask.clone();
+=======
             error_image = true;
             return;
         }
+>>>>>>> c4b694c4dfd2c9beb2c3829e07827fada6b6cd30
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -278,6 +332,36 @@
         cv::bitwise_not(mask1, mask1);
         cv::bitwise_or(temp_img, mask1, temp_img);
     }
+<<<<<<< HEAD
+    void IMAGE::cropImage(int height_up, float height_down, int threshold)
+    {
+      try{
+       int height = this->img.rows;
+       int width = this->img.cols;  
+       int aspect_ratio_height = width / height_down;
+       height-=aspect_ratio_height;
+       Rect roi(0, height_up, width, height);
+       this->img = this->img(roi);
+        cv::cvtColor(img, grey, COLOR_BGR2GRAY); 
+        cv::threshold(grey, binary, threshold, 255, THRESH_BINARY);
+      }
+      catch(const std::exception& e)
+      {
+          error_image=true;
+      }
+    }
+    void IMAGE:: Preprocess(int filterLargeContours_threshold,int RefixThreholds_binary_threshold,int RefixThreholds_size_theshold,
+    int detectStraightLines_dilation_iterations,int detectStraightLines_horizontal_iterations,int detectStraightLines_diagonal1_iterations
+        , int detectStraightLines_diagonal2_iterations,int detectStraightLines_area_threshold, int detectStraightLines_width_threshold, 
+        int detectStraightLines_line_width,bool contours_threshold)
+    {
+        filterLargeContours(filterLargeContours_threshold);
+        fixPrespective();
+        RefixThreholds(RefixThreholds_binary_threshold,RefixThreholds_size_theshold,contours_threshold);
+        detectStraightLines(detectStraightLines_dilation_iterations,detectStraightLines_horizontal_iterations,detectStraightLines_diagonal1_iterations,
+        detectStraightLines_diagonal2_iterations,detectStraightLines_area_threshold,detectStraightLines_width_threshold,detectStraightLines_line_width);
+    }
+=======
     void IMAGE::Preprocess(int filterLargeContours_threshold, int RefixThreholds_binary_threshold, int RefixThreholds_size_theshold,
                            int detectStraightLines_dilation_iterations, int detectStraightLines_horizontal_iterations, int detectStraightLines_diagonal1_iterations, int detectStraightLines_diagonal2_iterations, int detectStraightLines_area_threshold, int detectStraightLines_width_threshold,
                            int detectStraightLines_line_width)
@@ -298,3 +382,4 @@
             return;
         }
     }
+>>>>>>> c4b694c4dfd2c9beb2c3829e07827fada6b6cd30
