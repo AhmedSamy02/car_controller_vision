@@ -19,7 +19,7 @@ class IMAGE
         //get rid of non straight lines using moprphology
         void detectStraightLines(int dilation_iterations=5,int horizontal_iterations=17,int diagonal1_iterations=17
         , int diagonal2_iterations=17,int area_threshold=1000, int width_threshold=100, int line_width=25);
-        void IMAGE::cropImage(int height_up=1200, float height_down=1.8, int threshold=180);
+        void cropImage(int height_up=1200, float height_down=1.8, int threshold=180);
     public:
     IMAGE(cv::Mat & img, int threshold=180,int height_up=1200, float height_down=1.8);
     cv::Mat& getImg();
