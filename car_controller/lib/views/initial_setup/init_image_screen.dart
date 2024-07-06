@@ -102,10 +102,8 @@ class _InitImageScreenState extends State<InitImageScreen> {
                               onPressed: () async {
                                 final picker = ImagePicker();
                                 final image = await picker.pickImage(
-                                    source: ImageSource.gallery);
-                                // image!.saveTo()
-                                // var image = await controller.takePicture();
-                                // print(image.path);
+                                    source: ImageSource.camera);
+                                
                                 var lis = await image!.readAsBytes();
                                 print('Taken Successfully = ${lis.length}');
                                 Navigator.pushNamed(

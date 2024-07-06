@@ -1,7 +1,9 @@
 import 'package:camera/camera.dart';
 import 'package:car_controller/constants.dart';
+import 'package:car_controller/controllers/serial_bluetooth.dart';
 import 'package:car_controller/services/isolates_creation.dart';
 import 'package:flutter/material.dart';
+import 'package:native_opencv/native_opencv.dart';
 
 class DetectionScreen extends StatefulWidget {
   const DetectionScreen({super.key});
@@ -11,27 +13,27 @@ class DetectionScreen extends StatefulWidget {
 }
 
 class _DetectionScreenState extends State<DetectionScreen> {
+  int timer = 0;
+  // bool b = false;
   late CameraController _controller;
+  bool result = true;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    final stopwatch = Stopwatch();
-    stopwatch.start();
-
     CreateIsolates.createIsolate();
-    _controller = CameraController(
-      cameras[0],
-      ResolutionPreset.max,
-    );
+    _controller = CameraController(cameras[0], ResolutionPreset.max,
+        imageFormatGroup: ImageFormatGroup.jpeg);
     _controller.initialize().then((_) {
       if (!mounted) {
         return;
       }
-
+      var opencv = getIt.get<NativeOpencv>();
       _controller.startImageStream((CameraImage image) async {
-        
         // CreateIsolates.sendToIsolate(image.planes[0].bytes);
+        var result = opencv.speedup(image.planes[0].bytes);
+        SerialBluetooth.sendValue(result != 0 ? "0" : "1");
+        debugPrint('Result = $result');
+        setState(() {});
       });
       setState(() {});
     }).catchError((Object e) {
@@ -54,7 +56,18 @@ class _DetectionScreenState extends State<DetectionScreen> {
       appBar: AppBar(
         title: const Text('Detection Screen'),
       ),
-      body: CameraPreview(_controller),
+      body: Column(
+        children: [
+          CameraPreview(_controller),
+          Text(
+            'Result = $result',
+            style: const TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+            ),
+          )
+        ],
+      ),
     );
   }
 }

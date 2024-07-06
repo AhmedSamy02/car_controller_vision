@@ -16,7 +16,7 @@ extern "C"
         return CV_VERSION;
     }
     // __attribute__((visibility("default"))) __attribute__((used))
-    bool initImage(const uint8_t *PngBytes, const int inBytesCount, int threshold = 180,int height_up=1200, float height_down=1.8)
+    uint8_t *initImage(const uint8_t *PngBytes, const int inBytesCount, int threshold = 180, int height_up = 1200, float height_down = 1.8)
     {
         if (image != NULL)
         {
@@ -24,16 +24,44 @@ extern "C"
             image = NULL;
         }
         std::vector<uint8_t> buffer(PngBytes, PngBytes + inBytesCount);
-        Mat img = imdecode(buffer, IMREAD_COLOR);
+        Mat imgFeed = imdecode(buffer, IMREAD_COLOR);
 
-        image = new IMAGE(img, threshold,height_up,height_down);
+        image = new IMAGE();
         // imwrite("/data/user/0/com.example.car_controller/cache/processed.jpg", image->getImg());
         // std::vector<uint8_t> buffer2;
         // cv::imencode(".jpg", image->getImg().clone(), buffer2);
         // uint8_t *pngArray = new uint8_t[buffer2.size()];
         // std::memcpy(pngArray, buffer2.data(), buffer2.size());
         // return pngArray;
-        return true;
+        // if (buffer.empty())
+        // {
+        //     return false;
+        // }
+        // cv::Mat img = cv::imdecode(buffer, cv::IMREAD_COLOR);
+        // if (img.empty())
+        // {
+        //     return false;
+        // }
+        int hh = imgFeed.rows;
+        int ww = imgFeed.cols;
+        int x = 0,
+            y = 0, w = ww, h = 1200;
+        rectangle(imgFeed, Point(x, y), Point(x + w, y + h), Scalar(255, 255, 255), -1);
+        x = 0, y = 2000, w = ww, h = 900;
+        rectangle(imgFeed, Point(x, y), Point(x + w, y + h), Scalar(255, 255, 255), -1);
+        x = 0, y = 2800, w = ww, h = 800;
+        rectangle(imgFeed, Point(x, y), Point(x + w, y + h), Scalar(255, 255, 255), -1);
+        x = 0, y = 0, w = 2000, h = hh;
+        rectangle(imgFeed, Point(x, y), Point(x + w, y + h), Scalar(255, 255, 255), -1);
+        x = 3200, y = 0, w = 2000, h = hh;
+        rectangle(imgFeed, Point(x, y), Point(x + w, y + h), Scalar(255, 255, 255), -1);
+
+        std::vector<uint8_t> newBuf;
+        cv::imencode(".png", imgFeed, newBuf);
+        uint8_t *pngArray = new uint8_t[newBuf.size()];
+        std::memcpy(pngArray, newBuf.data(), newBuf.size());
+        return pngArray;
+        // return hsv_image;
     }
     // __attribute__((visibility("default"))) __attribute__((used))
     bool destroyImage()
@@ -61,7 +89,7 @@ extern "C"
     {
         image->Preprocess(filterLargeContours_threshold, RefixThreholds_binary_threshold, RefixThreholds_size_theshold, detectStraightLines_dilation_iterations,
                           detectStraightLines_horizontal_iterations, detectStraightLines_diagonal1_iterations, detectStraightLines_diagonal2_iterations, detectStraightLines_area_threshold,
-                          detectStraightLines_width_threshold, detectStraightLines_line_width,contours_threshold);
+                          detectStraightLines_width_threshold, detectStraightLines_line_width, contours_threshold);
         std::vector<uint8_t> buffer;
         cv::imencode(".png", image->getTempImg(), buffer);
         uint8_t *pngArray = new uint8_t[buffer.size()];
@@ -72,5 +100,19 @@ extern "C"
         // uint8_t *pngArray = new uint8_t[buffer.size()];
         // std::memcpy(pngArray, buffer.data(), buffer.size());
         // return pngArray;
+    }
+    int speedUp(const uint8_t *PngBytes, const int inBytesCount)
+    {
+        vector<uint8_t> buffer(PngBytes, PngBytes + inBytesCount);
+        if (buffer.empty())
+        {
+            return -2;
+        }
+        cv::Mat img = cv::imdecode(buffer, cv::IMREAD_COLOR);
+        if (img.empty())
+        {
+            return -1;
+        }
+        return image->speedUp(img);
     }
 }

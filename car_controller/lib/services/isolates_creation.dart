@@ -1,6 +1,9 @@
 import 'dart:isolate';
 
+import 'package:car_controller/constants.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:native_opencv/native_opencv.dart';
 
 class CreateIsolates {
   CreateIsolates._();
@@ -16,9 +19,16 @@ class CreateIsolates {
 
     /// Listen to messages sent to Mike's receive port
     detectionReceivePort.listen((message) {
-      print('I recieved List of length = ${message.length}');
-      if (message.length == 0) {
-        detectionReceivePort.close();
+      // if (message.length == 0) {
+      //   detectionReceivePort.close();
+      // }
+      if (message is Uint8List) {
+        print('I recieved List of length = ${message.length}');
+        var opencv = getIt.get<NativeOpencv>();
+        // Future.delayed(Durations.extralong4);
+        int result = opencv.speedup(message);
+
+        print('Result = $result');
       }
     });
   }

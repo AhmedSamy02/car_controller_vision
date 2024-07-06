@@ -3,6 +3,8 @@ import 'package:car_controller/constants.dart';
 import 'package:car_controller/controllers/serial_bluetooth.dart';
 import 'package:car_controller/views/initial_setup/init_image_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:native_opencv/native_opencv.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,20 +37,45 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) {
-                  return const InitImageScreen();
-                }));
+              onPressed: () async {
+                Navigator.pushNamed(
+                  context,
+                  kDetectionScreen,
+                );
               },
-              child: const Text('Init Image'),
+              child: const Text('Image Detection'),
             ),
             ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, kDetectionScreen);
+                onPressed: () async {
+                  final picker = ImagePicker();
+                  final image =
+                      await picker.pickImage(source: ImageSource.camera);
+                  var lis = await image!.readAsBytes();
+                  // var b = NativeOpencv();
+                  // Future.delayed(Durations.extralong4);
+                  print('Taken Successfully = ${lis.length}');
+                  var opencv = getIt.get<NativeOpencv>();
+                  var result = opencv.initImage(lis);
+                  print('Result = $result');
+
+                  Navigator.pushNamed(
+                    context,
+                    kInitImagePreviewScreen,
+                    arguments: result,
+                  );
                 },
-                child: const Text('Image Detection')),
-            ElevatedButton(onPressed: () {}, child: const Text('Disconnect'))
+                child: const Text('Init Image')),
+            ElevatedButton(
+                onPressed: () {
+                  SerialBluetooth.sendValue("1");
+                },
+                child: const Text('Send 1')),
+            ElevatedButton(
+                onPressed: () {
+                  SerialBluetooth.sendValue("0");
+                },
+                child: const Text('Send 0')),
+            ElevatedButton(onPressed: () {}, child: const Text('Disconnect')),
           ],
         ),
       ),

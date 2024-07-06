@@ -6,11 +6,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class SerialBluetooth {
   static BluetoothConnection? _connection;
-  static const String address = '98:D3:B1:FD:73:E3';
-  void sendValue(String value) {
+
+  static const String address = '00:22:09:30:A8:68';
+  static void sendValue(String value) {
     _connection?.output.add(utf8.encode(value));
   }
-  
 
   static Future<void> connect() async {
     try {
